@@ -1,0 +1,5 @@
+!regex:type:match_pos
+^23 *$76 bc;\b
+^23 *$76 bc;\B
+^23 *$76 bc;\S
+^23 *$76 bc;\W
