@@ -67,7 +67,7 @@ public class ConfigFileWatcher implements Runnable {
         try {
             initWatcher();
 
-            while(!Thread.currentThread().isInterrupted()) {
+            while(true) {
                 WatchKey key;
                 key = watcher.take();
 

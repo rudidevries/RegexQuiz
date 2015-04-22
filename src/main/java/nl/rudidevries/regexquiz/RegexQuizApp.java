@@ -18,6 +18,7 @@ public class RegexQuizApp {
 
         ConfigFileWatcher configFileWatcher = new ConfigFileWatcher(loader, dir);
         Thread fileThread = new Thread(configFileWatcher);
+        fileThread.setDaemon(true);
         fileThread.start();
 
         Question question;
@@ -32,6 +33,5 @@ public class RegexQuizApp {
             }
         }
 
-        fileThread.interrupt();
     }
 }
