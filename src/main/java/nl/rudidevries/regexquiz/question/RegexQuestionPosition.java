@@ -1,5 +1,6 @@
 package nl.rudidevries.regexquiz.question;
 
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,8 +53,13 @@ public class RegexQuestionPosition implements RegexQuestion {
 
     @Override
     public String toString() {
-        return "Regex positions: what are the starting position for all matches? (separate with one space):\n"
-               + "[ " + match + " ] matched with [ " + regex + " ]";
+        ResourceBundle questionBundle = ResourceBundle.getBundle("nl.rudidevries.regexquiz.question.QuestionBundle");
+
+        return String.format(
+                questionBundle.getString("regexQuestionPosition_question"),
+                match,
+                regex
+        );
     }
 
     @Override

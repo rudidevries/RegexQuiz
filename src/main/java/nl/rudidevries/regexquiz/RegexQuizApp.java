@@ -8,19 +8,44 @@ import nl.rudidevries.regexquiz.question.QuestionBank;
 import nl.rudidevries.regexquiz.util.AnsiColor;
 
 import java.nio.file.*;
+import java.util.ResourceBundle;
 
 public class RegexQuizApp {
 
     public static void main(String[] args) {
-        QuestionBank bank = new QuestionBank();
-        FileLoader loader = new FileLoader(bank);
-        Path dir = Paths.get("./config");
+        ResourceBundle regexQuizBundle = ResourceBundle.getBundle("nl.rudidevries.regexquiz.RegexQuizBundle");
 
+        QuestionBank bank = new QuestionBank();
+        FileLoader loader = initFileLoader(bank, regexQuizBundle);
+        initConfigFileWatcher(loader);
+
+        runQuestions(bank);
+    }
+
+    private static FileLoader initFileLoader(QuestionBank bank, final ResourceBundle regexQuizBundle) {
+        FileLoader loader = new FileLoader(bank);
+
+        loader.addEventHandler(new FileLoader.LoadedEventHandler() {
+            @Override
+            public void handle(QuestionBank bank) {
+                System.out.println(AnsiColor.GREEN.apply(
+                        String.format(regexQuizBundle.getString("bankQuestionLoaded"), bank.size())
+                ));
+            }
+        });
+
+        return loader;
+    }
+
+    private static void initConfigFileWatcher(FileLoader loader) {
+        Path dir = Paths.get("./config");
         ConfigFileWatcher configFileWatcher = new ConfigFileWatcher(loader, dir);
         Thread fileThread = new Thread(configFileWatcher);
         fileThread.setDaemon(true);
         fileThread.start();
+    }
 
+    private static void runQuestions(QuestionBank bank) {
         Question question;
         while((question = bank.getQuestion()) != null) {
             System.out.println(question);
@@ -32,6 +57,5 @@ public class RegexQuizApp {
                 System.out.println(AnsiColor.RED.apply("Incorrect!") + " The correct answer is [ " + question.getCorrectAnswer() + " ]");
             }
         }
-
     }
 }

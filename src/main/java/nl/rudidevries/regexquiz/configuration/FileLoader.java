@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The FileLoader class is responsible for reading question configuration
@@ -18,6 +20,8 @@ public class FileLoader {
 
     private QuestionBank bank;
 
+    private List<EventHandler> eventHandlers;
+
     /**
      * Constructor
      *
@@ -25,6 +29,30 @@ public class FileLoader {
      */
     public FileLoader(QuestionBank bank) {
         this.bank = bank;
+        eventHandlers = new ArrayList<>();
+    }
+
+    /**
+     * Add an event handler
+     * @param handler An event handler
+     */
+    public void addEventHandler(EventHandler handler) {
+        eventHandlers.add(handler);
+    }
+
+    /**
+     * Private interface to mark EventHandlers
+     */
+    private interface EventHandler {}
+
+    /**
+     * LoadedEventHandler interface
+     *
+     * EventHandlers of this type can be added, and will be called
+     * when new Questions are loaded into the bank.
+     */
+    public interface LoadedEventHandler extends EventHandler {
+        void handle(QuestionBank bank);
     }
 
     /**
@@ -55,7 +83,7 @@ public class FileLoader {
         }
 
         bank.shuffle();
-        System.out.println(AnsiColor.GREEN.apply("There are now " + bank.size() + " questions available."));
+        triggerLoadedEvent();
     }
 
     /**
@@ -68,4 +96,17 @@ public class FileLoader {
     private boolean hasCorrectFileFormat(String firstLine) {
         return true;
     }
+
+    /**
+     * Trigger loaded event. This event gets triggered when
+     * new questions are added to the bank.
+     */
+    private void triggerLoadedEvent() {
+        for (EventHandler handler: eventHandlers) {
+            if (handler instanceof LoadedEventHandler) {
+                ((LoadedEventHandler)handler).handle(bank);
+            }
+        }
+    }
+
 }
