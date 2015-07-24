@@ -19,3 +19,6 @@ From the main directory:
 * Maven configuration
 * Unit testing
 * ...
+
+## Disclaimer
+I will probably never finish/expand this project. It was all good fun. Earned my OCP btw ;-)
